@@ -1,5 +1,3 @@
-package originalApp;
-
 /* -----------------------------------------------------------------
     Navy M3/M4 Enigma Emulator
     Copyright (c) 2006-2014, by Louise Dade. All rights reserved.
@@ -18,12 +16,10 @@ package originalApp;
 /* OBJECT ----------------------------------------------------------
     Stores global variables and machine settings
    ----------------------------------------------------------------- */
-
-public class jscirptVer {
-    function ENIGMA()
+function ENIGMA()
 {
     // Debug the wiring.
-    this.debug_wiring = 0; // 0 = off, 1 = on
+    this.debug_wiring = 1; // 0 = off, 1 = on
     this.debug_string = "Kb  Pb  R   M   L   Rf  L   M   R   Pb\n"; // Init debug content string
 
     // Plaintext Alphabet
@@ -401,17 +397,17 @@ function doCipher()
 
     // First Pass - R Wheel
     number = mapLetter(number,ring_r,start_r,wheel_r, 1);
-
+	
     run_debug(0, number);
 
     // First Pass - M Wheel
     number = mapLetter(number,ring_m,start_m,wheel_m, 1);
-
+	
     run_debug(0, number);
 
     // First Pass - L Wheel
     number = mapLetter(number,ring_l,start_l,wheel_l, 1);
-
+	
     run_debug(0, number);
 
     // If using M4 Enigma
@@ -888,4 +884,3 @@ function removeEvent( obj, type, fn )
 
 addEvent(window, "load", initEnigma);
 addEvent(document, "keydown", getKeyIn);
-}

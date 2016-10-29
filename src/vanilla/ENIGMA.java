@@ -32,16 +32,16 @@ public class ENIGMA {
     };
     
     static String arrReflector = ".YRUHQSLDPXNGOKMIEBFZCWVJAT"; // M3 B
-
-    static String lastkeypressed = ""; // Keyboard key pressed
-    static String inputmethod = "single";
     
     public static void main(String[] args) {
-        String settingsString = "123AAAAAA";     //tempted to call it short as the "SS"
+        String settingsString = "381CEGAAA";     //tempted to call it short as the "SS"
         document = new settings(settingsString);
-        System.out.println(doCipher('A'));
-        System.out.println(doCipher('A'));
-        System.out.println(doCipher('A'));
+        String inputString = "INTERSTING";
+        
+        for (int i = 0; i < inputString.length(); i++) {
+            System.out.print(doCipher(inputString.charAt(i)));
+        }
+        System.out.println();        
     }
     
     /**
@@ -178,59 +178,45 @@ public class ENIGMA {
      * @param input The input character (plaintext)
      * @return  The output character (ciphertext)
      */
-    public static char doCipher(char input) {
-        rotateCogs();
-        
+    public static char doCipher(char input) {        
+        // Get current status of Wheel Order
         int wheel_l = document.wheelLeft;
-        int wheel_m = document.wheelRight;
+        int wheel_m = document.wheelMid;
         int wheel_r = document.wheelRight;
         
+        // Get current status of Wheel Ring Setting
         int ring_l = plaintext.indexOf(document.ring.substring(0, 1));
         int ring_m = plaintext.indexOf(document.ring.substring(1, 2));
         int ring_r = plaintext.indexOf(document.ring.substring(2, 3));        
         
+        //convert input letter to number
+        int number = plaintext.indexOf(input);
+        
+        rotateCogs();
+        
         int start_l = plaintext.indexOf(document.ground.substring(0, 1));
         int start_m = plaintext.indexOf(document.ground.substring(1, 2));
         int start_r = plaintext.indexOf(document.ground.substring(2, 3));
-        
-    /* -----------------------------------------------------------------
-        Enigma Process
-         1. Convert input letter to number - validate!
-         2. Rotate wheels
-         3. Pass through plugboard
-         4. Pass through right-hand wheel
-         5. Pass through middle wheel
-         6. Pass through left-hand wheel
-         7. Pass through reflector
-         8. Pass through left-hand wheel
-         9. Pass through middle wheel
-        10. Pass through right-hand wheel
-        11. Pass through plugboard
-        12. Convert to output letter
-    ----------------------------------------------------------------- */
-        
-        //convert input letter to number
-        int number = input - 'A' + 1;
-        
+
         //First pass - Plugboard
         number = swapPlugs(number);
         //First pass - R Wheel
         number = mapLetter(number, ring_r, start_r, wheel_r, 1);
         // First Pass - M Wheel
-        number = mapLetter(number,ring_m,start_m,wheel_m, 1);
+        number = mapLetter(number, ring_m, start_m, wheel_m, 1);
         // First Pass - L Wheel
-        number = mapLetter(number,ring_l,start_l,wheel_l, 1);
+        number = mapLetter(number, ring_l, start_l, wheel_l, 1);
         // Reflector
         char let = ENIGMA.arrReflector.charAt(number);
         number = ENIGMA.plaintext.indexOf(let);
         // Second Pass - L Wheel
-        number = mapLetter(number,ring_l,start_l,wheel_l, 2);
+        number = mapLetter(number, ring_l, start_l, wheel_l, 2);
         // Second Pass - M Wheel
-        number = mapLetter(number,ring_m,start_m,wheel_m, 2);
+        number = mapLetter(number, ring_m, start_m, wheel_m, 2);
         // Second Pass - R Wheel
-        number = mapLetter(number,ring_r,start_r,wheel_r, 2);
+        number = mapLetter(number, ring_r, start_r, wheel_r, 2);
         // Passes through ETW again
-
+        //  Stator / Entrittswalze = Static Wheel
         // Second Pass - Plugboard
         number = swapPlugs(number);
         
