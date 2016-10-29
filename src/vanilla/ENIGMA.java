@@ -34,14 +34,14 @@ public class ENIGMA {
     static String arrReflector = ".YRUHQSLDPXNGOKMIEBFZCWVJAT"; // M3 B
     
     public static void main(String[] args) {
-        String settingsString = "381CEGAAA";     //tempted to call it short as the "SS"
-        document = new settings(settingsString);
-        String inputString = "INTERSTING";
-        
-        for (int i = 0; i < inputString.length(); i++) {
-            System.out.print(doCipher(inputString.charAt(i)));
+        String settingsString = args[0];     //tempted to call it short as the "SS"
+        String cipherString = args[1];
+        document = new settings(settingsString);        
+        String decipherString = "";
+        for (int i = 0; i < cipherString.length(); i++) {
+            decipherString += doCipher(cipherString.charAt(i));
         }
-        System.out.println();        
+        System.out.println(decipherString);
     }
     
     /**
