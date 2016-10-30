@@ -1,295 +1,375 @@
-//package chocolate;
-//
-///**
-// * Enigma object with main class.
-// * Can be called by a different class or run itself (with little code modification)
-// * @author Jinqiu Liu
-// */
-//public class ENIGMA {       
-//    public static String cipherText = 
-//        "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";
-//    
-//    /**
-//     * The setting string should be of the following format (with no spaces).
-//     * NO Enigma Type setting, since it will always be M3 for us.
-//     * NO reflector setting, since it will always be type B for us.
-//     * Left_Rotor_Type, Mid_Rotor_Type, Right_Rotor_Type (Walzenlage),
-//     *      use number between 1 - 8.
-//     * 3 letter ring (Ringstellung) setting, UPPERCASE only, "AAA" to "ZZZ".
-//     * NO ground setting, since it will always start at "AAA" for us.
-//     * Plugboard pairs (steckerbrett), UPPERCASE only, enter by pairs.
-//     * 
-//     * e.g. 256XAPQNUHJP means 
-//     * Rotor Type II, V, VI, 
-//     * Ring setting XAP,
-//     * Plug board connections Q-N, U-H, J-P     * 
-//     */
-//    public static String settingsString;
-//    
-//    public static String[] plugBoard;
-//    
-//    public static String rotor_l;
-//    public static String rotor_m;
-//    public static String rotor_r;
-//    
-//    public static byte[] rotorKnockpoint_l = new byte[2];
-//    public static byte[] rotorKnockpoint_m = new byte[2];
-//    public static byte[] rotorKnockpoint_r = new byte[2];
-//    
-//    public static final String reflector = ".YRUHQSLDPXNGOKMIEBFZCWVJAT"; // M3 B
-//    
-//    public static byte ring_l;
-//    public static byte ring_m;
-//    public static byte ring_r;
-//    
-//    public static byte ground_l;
-//    public static byte ground_m;
-//    public static byte ground_r;
-//    
-//    // Plaintext Alphabet
-//    static final String plaintext = ".ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-//
-//    // Rotor Wiring
-//    static final String[] rotors = { 
-//        ".ABCDEFGHIJKLMNOPQRSTUVWXYZ", // Rotor "0"
-//        ".EKMFLGDQVZNTOWYHXUSPAIBRCJ", // Rotor I
-//        ".AJDKSIRUXBLHWTMCQGZNPYFVOE", // Rotor II
-//        ".BDFHJLCPRTXVZNYEIWGAKMUSQO", // Rotor III
-//        ".ESOVPZJAYQUIRHXLNFTGKDCMWB", // Rotor IV
-//        ".VZBRGITYUPSDNHLXAWMJQOFECK", // Rotor V
-//        ".JPGVOUMFYQBENHZRDKASXLICTW", // Rotor VI
-//        ".NZJHGRCXMYSWBOUFAIVLPEKQDT", // Rotor VII
-//        ".FKQHTLXOCBJSPDZRAMEWNIUYGV"  // Rotor VIII
-//    };
-//    
-//    static final byte[][] rotorKnockpoints = {
-//        {},                            //   EMPTY               (R 0)
-//        {17, 17},                      //   Q - one knockpoint  (R I)
-//        { 5,  5},                      //   E - one knockpoint  (R II)
-//        {22, 22},                      //   V - one knockpoint  (R III)
-//        {10, 10},                      //   J - one knockpoint  (R IV)
-//        {26, 26},                      //   Z - one knockpoint  (R V)
-//        {26, 13},                      // Z/M - two knockpoints (R VI)
-//        {26, 13},                      // Z/M - two knockpoints (R VII)
-//        {26, 13}                       // Z/M - two knockpoints (R VIII)
-//    };
-//    
-//    public static void main(String[] args) {
-//        //load settings
-//        settingsString = args[0];       //Modify this to run from here
-//        
-//        //Assign settings variables
-//        switch(settingsString.charAt(0)) {
-//            case '1':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '2':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '3':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '4':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '5':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '6':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '7':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//            case '8':
-//                rotor_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
-//                break;
-//        }
-//             
-//        
-//        String decipher = "";
-//        for (byte i = 0; i < cipherText.length(); i++) {
-//            decipher += doCipher(cipherText.charAt(i));
-//        }     
-//    }
-//    
-//    /**
-//     * Swap the steckerbrett pairings.
-//     * e.g., pair 'AD' - if 'A' goes in, 'D' comes out and vice versa
-//     * @param num Numeric representation of the letter that goes in
-//     * @return Numeric representation of the letter that comes out
-//     */
-//    public static int swapPlugs(int num) {
-//        String t = plaintext.substring(num, num+1);
-//        int i = document.plugin.indexOf(t);
-//        int o = document.plugout.indexOf(t);
-//        if (i > -1) {
-//            //this letter is found in the plugin
-//            return i;
-//        } else if (o > -1) {
-//            //this letter is found in the plugout
-//            return o;
-//        } else {
-//            //this letter is not part of the plug board
-//            return num;
-//        }
-//    } 
-//    
-//    /**
-//     * Take n mod 26 and ensures it's positive.
-//     * @param n The index of a letter. 1, 27 for A and 0, 26 for Z.
-//     * @return  
-//     */
-//    public static int validLetter(int n) {
-//        while (n <= 0) {
-//            n += 26;
-//        }
-//        while (n >= 27) {
-//            n -= 26;
-//        }
-//        return n;
-//    }
-//
-//    /**
-//     * Rotate the wheels/cogs by one letter.
-//     * This function directly modifies the global setting.
-//     */
-//    public static void rotateCogs() {
-//        String currentCog = document.ground;
-//        int pl = plaintext.indexOf(currentCog.substring(0, 1));
-//        int pm = plaintext.indexOf(currentCog.substring(1, 2));
-//        int pr = plaintext.indexOf(currentCog.substring(2, 3));
-//        
-//        // r = right, m = middle, l = left
-//        int r = document.wheelRight;
-//        int m = document.wheelMid;
-//        int l = document.wheelLeft;
-//        
-//        if (pr == arrKnockpoints[r][0] || pr == arrKnockpoints[r][1]) {
-//            // If the knockpoint on the right wheel is reached rotate middle wheel
-//            // But first check if it too is a knock point
-//            if (pm == arrKnockpoints[m][0] || pm == arrKnockpoints[m][1]) {
-//                // If the knockpoint on the middle wheel is reached rotate left wheel
-//                pl++;
-//            }
-//            pm++;
-//        } else {
-//            if (pm == arrKnockpoints[m][0] || pm == arrKnockpoints[m][1]) {
-//                pl++;
-//                pm++;
-//            }
-//        }
-//        
-//        // Rotate right wheel (this wheel is always rotated).
-//        pr++;
-//        
-//        // If rotating brings us beyond "Z" (26), then start at "A" (1) again.
-//        if (pr > 26) {pr = 1;}
-//        if (pm > 26) {pm = 1;}
-//        if (pl > 26) {pl = 1;}
-//        
-//        // Save the new setting back to groundwheel
-//        document.ground = plaintext.substring(pl, pl+1) 
-//                        + plaintext.substring(pm, pm+1) 
-//                        + plaintext.substring(pr, pr+1);
-//    }
-//
-//    /**
-//     * Map one letter to another through current wheel
-//     * @param number        Numeric representation of the input letter
-//     * @param ringstellung  Wheel ring setting (static)
-//     * @param wheelposition wheel position (rotates)
-//     * @param wheel         current wheel
-//     * @param pass          pass = are we going R->L (1) or L->R (2)
-//     * @return 
-//     */
-//    public static int mapLetter(int number, int ringstellung, 
-//                                int wheelposition, int wheel, int pass) {
-//        // Change number according to ringstellung (ring setting)
-//        // Wheel turns anti-clockwise (looking from right)
-//        number = number - ringstellung;
-//        // Check number is between 1 and 26
-//        number = validLetter(number);
-//
-//        // Change number according to wheel position
-//        // Wheel turns clockwise (looking from right)
-//        number = number + wheelposition;
-//        // Check number is between 1 and 26
-//        number = validLetter(number);
-//
-//        // Do internal connection 'x' to 'y' according to direction  
-//        if (pass == 2) {
-//            char let = ENIGMA.plaintext.charAt(number);
-//            number = ENIGMA.arrRotors[wheel].indexOf(let);
-//        } else {
-//            char let = ENIGMA.arrRotors[wheel].charAt(number);
-//            number = ENIGMA.plaintext.indexOf(let);
-//        }
-//
-//        // NOW WORK IT BACKWARDS : subtract where we added and vice versa
-//
-//        // Change according to wheel position (anti-clockwise)
-//        number = number - wheelposition;
-//        // Check number is between 1 and 26
-//        number = validLetter(number);
-//
-//        // Change according to ringstellung (clockwise)
-//        number = number + ringstellung;
-//        // Check number is between 1 and 26
-//        number = validLetter(number);
-//
-//        return number;        
-//    }
-//
-//    /**
-//     * Run the whole Enigma machine process.
-//     * The functions above are called from this routine.
-//     * @param input The input character (plaintext)
-//     * @return  The output character (ciphertext)
-//     */
-//    public static char doCipher(char input) {        
-//        // Get current status of Wheel Order
-//        int wheel_l = document.wheelLeft;
-//        int wheel_m = document.wheelMid;
-//        int wheel_r = document.wheelRight;
-//        
-//        // Get current status of Wheel Ring Setting
-//        int ring_l = plaintext.indexOf(document.ring.substring(0, 1));
-//        int ring_m = plaintext.indexOf(document.ring.substring(1, 2));
-//        int ring_r = plaintext.indexOf(document.ring.substring(2, 3));        
-//        
-//        //convert input letter to number
-//        int number = plaintext.indexOf(input);
-//        
-//        rotateCogs();
-//        
-//        int start_l = plaintext.indexOf(document.ground.substring(0, 1));
-//        int start_m = plaintext.indexOf(document.ground.substring(1, 2));
-//        int start_r = plaintext.indexOf(document.ground.substring(2, 3));
-//
-//        //First pass - Plugboard
-//        number = swapPlugs(number);
-//        //First pass - R Wheel
-//        number = mapLetter(number, ring_r, start_r, wheel_r, 1);
-//        // First Pass - M Wheel
-//        number = mapLetter(number, ring_m, start_m, wheel_m, 1);
-//        // First Pass - L Wheel
-//        number = mapLetter(number, ring_l, start_l, wheel_l, 1);
-//        // Reflector
-//        char let = ENIGMA.arrReflector.charAt(number);
-//        number = ENIGMA.plaintext.indexOf(let);
-//        // Second Pass - L Wheel
-//        number = mapLetter(number, ring_l, start_l, wheel_l, 2);
-//        // Second Pass - M Wheel
-//        number = mapLetter(number, ring_m, start_m, wheel_m, 2);
-//        // Second Pass - R Wheel
-//        number = mapLetter(number, ring_r, start_r, wheel_r, 2);
-//        // Passes through ETW again
-//        //  Stator / Entrittswalze = Static Wheel
-//        // Second Pass - Plugboard
-//        number = swapPlugs(number);
-//        
-//        return plaintext.charAt(number);
-//    }
-//}
-//
+package chocolate;
+
+/**
+ * Enigma object with main class.
+ * Can be called by a different class or run itself (with little code modification)
+ * @author Jinqiu Liu
+ */
+public class ENIGMA {       
+    public static String cipherText = 
+        "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";
+    
+    /**
+     * The setting string should be of the following format (with no spaces).
+     * NO Enigma Type setting, since it will always be M3 for us.
+     * NO reflector setting, since it will always be type B for us.
+     * Left_Rotor_Type, Mid_Rotor_Type, Right_Rotor_Type (Walzenlage),
+     *      use number between 1 - 8.
+     * 3 letter ring (Ringstellung) setting, UPPERCASE only, "AAA" to "ZZZ".
+     * NO ground setting, since it will always start at "AAA" for us.
+     * Plugboard pairs (steckerbrett), UPPERCASE only, enter by pairs.
+     * 
+     * e.g. 256XAPQNUHJP means 
+     * Rotor Type II, V, VI, 
+     * Ring setting XAP,
+     * Plug board connections Q-N, U-H, J-P     * 
+     */
+    public static String settingsString;
+    
+    public static byte plugBoard_1i = 0;
+    public static byte plugBoard_1o = 0;
+    public static byte plugBoard_2i = 0;
+    public static byte plugBoard_2o = 0;
+    public static byte plugBoard_3i = 0;
+    public static byte plugBoard_3o = 0;
+    public static byte plugBoard_4i = 0;
+    public static byte plugBoard_4o = 0;
+    
+    public static String rotorString_l;
+    public static String rotorString_m;
+    public static String rotorString_r;
+    
+    // Left rotor knockpoints does not matter
+    public static byte rotorKnockpoint_m1;
+    public static byte rotorKnockpoint_m2;
+    public static byte rotorKnockpoint_r1;
+    public static byte rotorKnockpoint_r2;
+    
+    // M3 B-type reflector.
+    public static final String reflector = ".YRUHQSLDPXNGOKMIEBFZCWVJAT"; 
+    
+    public static byte ring_l;
+    public static byte ring_m;
+    public static byte ring_r;
+    
+    // Ground setting is "AAA" by default
+    public static byte ground_l = 1;
+    public static byte ground_m = 1;
+    public static byte ground_r = 1;
+    
+    // Plaintext Alphabet
+    static final String alphabets = ".ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    
+    public static void main(String[] args) {
+        //load settings
+        settingsString = args[0];       //Modify this to run from here
+        //cipherText = "AAAA";          //Modify this for debugging
+        //Assign settings variables
+        //start of rotor selections
+        switch(settingsString.charAt(0)) { //left rotor
+            case '1':
+                rotorString_l = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+                break;
+            case '2':
+                rotorString_l = ".AJDKSIRUXBLHWTMCQGZNPYFVOE";
+                break;
+            case '3':
+                rotorString_l = ".BDFHJLCPRTXVZNYEIWGAKMUSQO";
+                break;
+            case '4':
+                rotorString_l = ".ESOVPZJAYQUIRHXLNFTGKDCMWB";
+                break;
+            case '5':
+                rotorString_l = ".VZBRGITYUPSDNHLXAWMJQOFECK";
+                break;
+            case '6':
+                rotorString_l = ".JPGVOUMFYQBENHZRDKASXLICTW";
+                break;
+            case '7':
+                rotorString_l = ".NZJHGRCXMYSWBOUFAIVLPEKQDT";
+                break;
+            case '8':
+                rotorString_l = ".FKQHTLXOCBJSPDZRAMEWNIUYGV";
+                break;
+        }
+        
+        switch(settingsString.charAt(1)) { //mid rotor
+            case '1':
+                rotorString_m = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+                rotorKnockpoint_m1 = 17;
+                rotorKnockpoint_m2 = 17;
+                break;
+            case '2':
+                rotorString_m = ".AJDKSIRUXBLHWTMCQGZNPYFVOE";
+                rotorKnockpoint_m1 =  5;
+                rotorKnockpoint_m2 =  5;
+                break;
+            case '3':
+                rotorString_m = ".BDFHJLCPRTXVZNYEIWGAKMUSQO";
+                rotorKnockpoint_m1 = 22;
+                rotorKnockpoint_m2 = 22;
+                break;
+            case '4':
+                rotorString_m = ".ESOVPZJAYQUIRHXLNFTGKDCMWB";
+                rotorKnockpoint_m1 = 10;
+                rotorKnockpoint_m2 = 10;
+                break;
+            case '5':
+                rotorString_m = ".VZBRGITYUPSDNHLXAWMJQOFECK";
+                rotorKnockpoint_m1 = 26;
+                rotorKnockpoint_m2 = 26;
+                break;
+            case '6':
+                rotorString_m = ".JPGVOUMFYQBENHZRDKASXLICTW";
+                rotorKnockpoint_m1 = 26;
+                rotorKnockpoint_m2 = 13;
+                break;
+            case '7':
+                rotorString_m = ".NZJHGRCXMYSWBOUFAIVLPEKQDT";
+                rotorKnockpoint_m1 = 26;
+                rotorKnockpoint_m2 = 13;
+                break;
+            case '8':
+                rotorString_m = ".FKQHTLXOCBJSPDZRAMEWNIUYGV";
+                rotorKnockpoint_m1 = 26;
+                rotorKnockpoint_m2 = 13;
+                break;
+        }
+        
+        switch(settingsString.charAt(2)) { //right rotor
+            case '1':
+                rotorString_r = ".EKMFLGDQVZNTOWYHXUSPAIBRCJ";
+                rotorKnockpoint_r1 = 17;
+                rotorKnockpoint_r2 = 17;
+                break;
+            case '2':
+                rotorString_r = ".AJDKSIRUXBLHWTMCQGZNPYFVOE";
+                rotorKnockpoint_r1 =  5;
+                rotorKnockpoint_r2 =  5;
+                break;
+            case '3':
+                rotorString_r = ".BDFHJLCPRTXVZNYEIWGAKMUSQO";
+                rotorKnockpoint_r1 = 22;
+                rotorKnockpoint_r2 = 22;
+                break;
+            case '4':
+                rotorString_r = ".ESOVPZJAYQUIRHXLNFTGKDCMWB";
+                rotorKnockpoint_r1 = 10;
+                rotorKnockpoint_r2 = 10;
+                break;
+            case '5':
+                rotorString_r = ".VZBRGITYUPSDNHLXAWMJQOFECK";
+                rotorKnockpoint_r1 = 26;
+                rotorKnockpoint_r2 = 26;
+                break;
+            case '6':
+                rotorString_r = ".JPGVOUMFYQBENHZRDKASXLICTW";
+                rotorKnockpoint_r1 = 26;
+                rotorKnockpoint_r2 = 13;
+                break;
+            case '7':
+                rotorString_r = ".NZJHGRCXMYSWBOUFAIVLPEKQDT";
+                rotorKnockpoint_r1 = 26;
+                rotorKnockpoint_r2 = 13;
+                break;
+            case '8':
+                rotorString_r = ".FKQHTLXOCBJSPDZRAMEWNIUYGV";
+                rotorKnockpoint_r1 = 26;
+                rotorKnockpoint_r2 = 13;
+                break;
+        }
+        //end of rotor selections
+        
+        //start of ring setting ('A' = 1, 'B' = 2, ... , 'Z' = 26)
+        ring_l = (byte) (settingsString.charAt(3) - 'A' + 1);
+        ring_m = (byte) (settingsString.charAt(4) - 'A' + 1);
+        ring_r = (byte) (settingsString.charAt(5) - 'A' + 1);
+        //end of ring setting
+        
+        //start of plugboard setting (optional)
+        settingsString = settingsString.substring(6);
+        if (settingsString.length() > 0) { //there is plug board setting
+            plugBoard_1i = (byte) (settingsString.charAt(0) - 'A' + 1);
+            plugBoard_1o = (byte) (settingsString.charAt(1) - 'A' + 1);
+            plugBoard_2i = (byte) (settingsString.charAt(2) - 'A' + 1);
+            plugBoard_2o = (byte) (settingsString.charAt(3) - 'A' + 1);
+            plugBoard_3i = (byte) (settingsString.charAt(4) - 'A' + 1);
+            plugBoard_3o = (byte) (settingsString.charAt(5) - 'A' + 1);
+            settingsString = settingsString.substring(6);
+            if (settingsString.length() > 0) { //there is 4th pair
+                plugBoard_4i = (byte) (settingsString.charAt(0) - 'A' + 1);
+                plugBoard_4o = (byte) (settingsString.charAt(1) - 'A' + 1);
+            }
+        } //else, no plugboard setting (for testing purpose only)
+        //end of plugboard setting (optional)
+        
+        String decipher = "";
+        for (byte i = 0; i < cipherText.length(); i++) {
+            decipher += doCipher(cipherText.charAt(i));
+        }
+        //System.out.println(decipher);
+    }    
+    
+    /**
+     * Take n mod 26 and ensures it's positive.
+     * @param n The index of a letter. 1, 27 for A and 0, 26 for Z.
+     * @return  
+     */
+    public static int validLetter(int n) {
+        while (n <= 0) {
+            n += 26;
+        }
+        while (n >= 27) {
+            n -= 26;
+        }
+        return n;
+    }
+
+    /**
+     * Run the whole Enigma machine process without other function calls.
+     * @param input The input character (plaintext)
+     * @return  The output character (ciphertext)
+     */
+    public static char doCipher(char input) {        
+        // convert input to number format
+        byte number = (byte) (input - 'A' + 1);
+        
+        // rotate cogs
+        if (ground_r == rotorKnockpoint_r1 || ground_r == rotorKnockpoint_r2) {
+            // If the knockpoint on the right wheel is reached rotate middle wheel
+            // But first check if it too is a knock point
+            if (ground_m == rotorKnockpoint_m1 || ground_m == rotorKnockpoint_m2) {
+                // If the knockpoint on the middle wheel is reached rotate left wheel
+                ground_l++;
+            }
+            ground_m++;
+        } else {
+            // Right wheel knockpoint is not met, but middle wheel is
+            if (ground_m == rotorKnockpoint_m1 || ground_m == rotorKnockpoint_m2) {
+                ground_l++;
+                ground_m++;
+            }
+        }
+        // right wheel should always be rotated
+        ground_r++;
+        //keeps everyone stay inside the cycle
+        if (ground_l > 26) { ground_l -= 26; }
+        if (ground_m > 26) { ground_m -= 26; }
+        if (ground_r > 26) { ground_r -= 26; }
+                
+        //First pass - Plugboard
+        if (number == plugBoard_1i) {
+            number = plugBoard_1o;
+        } else if (number == plugBoard_1o) {
+            number = plugBoard_1i;
+        } else if (number == plugBoard_2i) {
+            number = plugBoard_2o;
+        } else if (number == plugBoard_2o) {
+            number = plugBoard_2i;
+        } else if (number == plugBoard_3i) {
+            number = plugBoard_3o;
+        } else if (number == plugBoard_3o) {
+            number = plugBoard_3i;
+        } else if (number == plugBoard_4i) {
+            number = plugBoard_4o;
+        } else if (number == plugBoard_4o) {
+            number = plugBoard_4i;
+        }
+        
+        char temp;
+        //First pass - R Wheel
+        number -= ring_r;
+        number += ground_r;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        temp = rotorString_r.charAt(number);
+        number = (byte) (temp - 'A' + 1);        
+        number -= ground_r;
+        number += ring_r;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        
+        // First Pass - M Wheel
+        number -= ring_m;
+        number += ground_m;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        temp = rotorString_m.charAt(number);
+        number = (byte) (temp - 'A' + 1);
+        number -= ground_m;
+        number += ring_m;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        
+        // First Pass - L Wheel
+        number -= ring_l;
+        number += ground_l;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        temp = rotorString_l.charAt(number);
+        number = (byte) (temp - 'A' + 1);
+        number -= ground_l;
+        number += ring_l;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        
+        // Reflector
+        temp = reflector.charAt(number);
+        number = (byte) (temp - 'A' + 1);
+        
+        // Second Pass - L Wheel
+        number -= ring_l;
+        number += ground_l;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        number = (byte) rotorString_l.indexOf('A' + number - 1);
+        number -= ground_l;
+        number += ring_l;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        
+        // Second Pass - M Wheel
+        number -= ring_l;
+        number += ground_l;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        number = (byte) rotorString_m.indexOf('A' + number - 1);
+        number -= ground_m;
+        number += ring_m;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        
+        // Second Pass - R Wheel
+        number -= ring_r;
+        number += ground_r;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+        number = (byte) rotorString_r.indexOf('A' + number - 1);
+        number -= ground_r;
+        number += ring_r;
+        if (number > 26) number -= 26;
+        if (number <  1) number += 26;
+
+        // Second Pass - Plugboard
+        if (number == plugBoard_1i) {
+            number = plugBoard_1o;
+        } else if (number == plugBoard_1o) {
+            number = plugBoard_1i;
+        } else if (number == plugBoard_2i) {
+            number = plugBoard_2o;
+        } else if (number == plugBoard_2o) {
+            number = plugBoard_2i;
+        } else if (number == plugBoard_3i) {
+            number = plugBoard_3o;
+        } else if (number == plugBoard_3o) {
+            number = plugBoard_3i;
+        } else if (number == plugBoard_4i) {
+            number = plugBoard_4o;
+        } else if (number == plugBoard_4o) {
+            number = plugBoard_4i;
+        }
+        
+        return (char) ('A' + number - 1);
+    }
+}
+
