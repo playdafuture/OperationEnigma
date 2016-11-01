@@ -208,21 +208,6 @@ public class ENIGMA {
             decipher += doCipher(cipherText.charAt(i));
         }
         //System.out.println(decipher);
-    }    
-    
-    /**
-     * Take n mod 26 and ensures it's positive.
-     * @param n The index of a letter. 1, 27 for A and 0, 26 for Z.
-     * @return  
-     */
-    public static int validLetter(int n) {
-        while (n <= 0) {
-            n += 26;
-        }
-        while (n >= 27) {
-            n -= 26;
-        }
-        return n;
     }
 
     /**
