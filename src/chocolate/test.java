@@ -8,9 +8,9 @@ public class test {
         String k1 = "123KDB";
         String k2 = "123KDBAXBYCZDH";
         String[] t1 = {k2, c1};
-        ENIGMA.main(t1);
+        ENIGMA.encrypt(t1);
         String[] t2 = {k1, c2};
         ENIGMA.reset();
-        ENIGMA.main(t2);
+        ENIGMA.encrypt(t2);
     }
 }

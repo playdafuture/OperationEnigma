@@ -21,12 +21,13 @@ public class batchTesting {
                         ss+=a.substring(i,i+1);
                         ss+=a.substring(j,j+1);
                         ss+=a.substring(k,k+1);
+                        ss+="AAA";
                         String[] arguments = new String[2];
                         arguments[0] = ss;
-                        arguments[1] = "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";                        
+                        arguments[1] = "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";
                         seq++;
-                        System.out.println(seq+"|"+ss);
-                        //ENIGMA.main(arguments);
+                        //System.out.println(seq+"|"+ss);
+                        ENIGMA.main(arguments);
                     }
                 }
             }
