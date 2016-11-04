@@ -78,7 +78,9 @@ public class ENIGMA {
     public static String encrypt(String[] args) {
         //load settings
         settingsString = args[0];       //Modify this to run from here
-        //cipherText = args[1];           //Modify this for debugging
+        if (args.length == 2) {
+            cipherText = args[1];           //Modify this for debugging
+        }
         //Assign settings variables
         //start of rotor selections
         switch(settingsString.charAt(0)) { //left rotor

@@ -1,6 +1,9 @@
 package chocolate;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
@@ -15,13 +18,12 @@ public class batch {
     static int rotor = 122;
     static int r1 = 1, r2 = 1, r3 = 0;
     static int p1 = 1, p2 = 2, p3 = 3, p4 = 4, p5 = 5, p6 = 5;
+    static String[] cribs;
     
     public static void main(String[] args) {
         try {
-            secondBatch();
+            cribsWordAttack(2);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -73,6 +75,34 @@ public class batch {
                 break;
             }
         }
+    }
+    
+    public static void cribsWordAttack(int threshold) throws FileNotFoundException {
+        loadCrib();
+        PrintWriter writer = new PrintWriter("decrypts/crib.txt");
+        while (true) {
+            String rot = nextRotors();
+            if (rot != null) {                   
+                while (true) {
+                    String ring = nextRings();
+                    if (ring != null) {
+                        String[] ss = {rot+ring};
+                        ENIGMA.reset();
+                        String decrypt = ENIGMA.encrypt(ss);                            
+                        if (matchCribs(decrypt, threshold)) {
+                            writer.print(decrypt);
+                            writer.println(" "+rot+"-"+ring);
+                            System.out.println(decrypt+" "+rot+"-"+ring);
+                        }                            
+                    } else {
+                        break;                
+                    }
+                }
+            } else {
+                break;
+            }            
+        }
+        writer.close();
     }
     
     public static String nextRotors() {
@@ -160,6 +190,32 @@ public class batch {
                     +alphabets.substring(p4,p4+1)
                     +alphabets.substring(p5,p5+1)
                     +alphabets.substring(p6,p6+1);
+        }
+    }
+
+    private static boolean matchCribs(String decrypt, int threshold) {     
+        int matchCount = 0;
+        for (int i = 0; i < cribs.length; i++) {
+            if (decrypt.contains(cribs[i])) {
+                matchCount++;
+            }
+        }
+        return matchCount >= threshold;
+    }
+
+    private static void loadCrib() {
+        cribs = new String[49];
+        try {
+            BufferedReader inStream = new BufferedReader(new FileReader("filteredCrib.txt"));
+            for (int i = 0; i < 49; i++) {
+                String s = inStream.readLine();
+                s = s.substring(s.indexOf(" ")+1); 
+                cribs[i] = s;                          
+            }  
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException iex) {
+            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, iex);
         }
     }
 }
