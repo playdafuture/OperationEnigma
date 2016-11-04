@@ -1,24 +1,29 @@
 package chocolate;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Jinqiu Liu
  */
 public class batch {
     static String alphabets = ".ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static int rotor = 0;
+    static int rotor = 122;
     static int r1 = 1, r2 = 1, r3 = 0;
     static int p1 = 1, p2 = 2, p3 = 3, p4 = 4, p5 = 5, p6 = 5;
     
     public static void main(String[] args) {
-        int count = 0;
-        String s;
-        do {
-        s = next3Plugs();        
-            System.out.println(s);
-            count++;
-        } while (s != null);
-        System.out.println(count);
+        try {
+            secondBatch();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static void firstBatch() {
@@ -38,10 +43,34 @@ public class batch {
                         ss[0]+=a.substring(j,j+1);
                         ss[0]+=a.substring(k,k+1);
                         seq++;
-                        //System.out.println(seq+"|"+ss);
-                        ENIGMA.main(ss);
+                        System.out.println(seq+"|"+ss[0]);
+                        ENIGMA.reset();
+                        System.out.println(ENIGMA.encrypt(ss));
                     }
                 }
+            }
+        }
+    }
+    
+    public static void secondBatch() throws FileNotFoundException, UnsupportedEncodingException {        
+        while (true) {
+            String rot = nextRotors();
+            if (rot != null) {                
+                PrintWriter writer = new PrintWriter("decrypts/"+rot+".txt", "UTF-8");
+                while (true) {
+                    String ring = nextRings();
+                    if (ring != null) {                        
+                        String[] ss = {rot+ring};
+                        ENIGMA.reset();
+                        writer.print(ENIGMA.encrypt(ss));
+                        writer.println(ring);
+                    } else {
+                        writer.close();
+                        break;
+                    }                    
+                }                
+            } else {
+                break;
             }
         }
     }
@@ -60,7 +89,7 @@ public class batch {
         return null;
     }
     
-    public static String nextRing() {
+    public static String nextRings() {
         while (true) {
             r3++;
             if (r3 == 27) {

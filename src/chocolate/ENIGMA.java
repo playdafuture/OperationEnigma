@@ -60,10 +60,25 @@ public class ENIGMA {
     // Plaintext Alphabet
     static final String alphabets = ".ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    public static void main(String[] args) {
+    public static void reset() {
+        plugBoard_1i = 0;
+        plugBoard_1o = 0;
+        plugBoard_2i = 0;
+        plugBoard_2o = 0;
+        plugBoard_3i = 0;
+        plugBoard_3o = 0;
+        plugBoard_4i = 0;
+        plugBoard_4o = 0;
+        
+        ground_l = 1;
+        ground_m = 1;
+        ground_r = 1;
+    }
+    
+    public static String encrypt(String[] args) {
         //load settings
         settingsString = args[0];       //Modify this to run from here
-        //cipherText = "AAAA";          //Modify this for debugging
+        //cipherText = args[1];           //Modify this for debugging
         //Assign settings variables
         //start of rotor selections
         switch(settingsString.charAt(0)) { //left rotor
@@ -207,7 +222,7 @@ public class ENIGMA {
         for (byte i = 0; i < cipherText.length(); i++) {
             decipher += doCipher(cipherText.charAt(i));
         }
-        //System.out.println(decipher);
+        return (decipher);
     }
 
     /**
@@ -314,8 +329,8 @@ public class ENIGMA {
         if (number <  1) number += 26;
         
         // Second Pass - M Wheel
-        number -= ring_l;
-        number += ground_l;
+        number -= ring_m;
+        number += ground_m;
         if (number > 26) number -= 26;
         if (number <  1) number += 26;
         number = (byte) rotorString_m.indexOf('A' + number - 1);
