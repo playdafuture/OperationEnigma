@@ -22,7 +22,7 @@ public class batch {
     
     public static void main(String[] args) {
         try {
-            cribsWordAttack(2);
+            cribsWordAttack(3);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,7 +58,7 @@ public class batch {
         while (true) {
             String rot = nextRotors();
             if (rot != null) {                
-                PrintWriter writer = new PrintWriter("decrypts/"+rot+".txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("files/decrypts/"+rot+".txt", "UTF-8");
                 while (true) {
                     String ring = nextRings();
                     if (ring != null) {                        
@@ -79,7 +79,7 @@ public class batch {
     
     public static void cribsWordAttack(int threshold) throws FileNotFoundException {
         loadCrib();
-        PrintWriter writer = new PrintWriter("decrypts/crib.txt");
+        PrintWriter writer = new PrintWriter("files/decrypts/crib"+threshold+".txt");
         while (true) {
             String rot = nextRotors();
             if (rot != null) {                   
