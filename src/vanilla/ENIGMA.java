@@ -33,15 +33,15 @@ public class ENIGMA {
     
     static String arrReflector = ".YRUHQSLDPXNGOKMIEBFZCWVJAT"; // M3 B
     
-    public static void main(String[] args) {
-        String settingsString = "135KDBAAA";     //tempted to call it short as the "SS"
-        String cipherString = "RUYQLDOYPWQBHCIBXEQSV";
+    public static String encrypt(String[] args) {
+        String settingsString = args[0];     //tempted to call it short as the "SS"
+        String cipherString = args[1];
         document = new settings(settingsString);        
         String decipherString = "";
         for (int i = 0; i < cipherString.length(); i++) {
             decipherString += doCipher(cipherString.charAt(i));
         }
-        System.out.println(decipherString);
+        return (decipherString);
     }
     
     /**

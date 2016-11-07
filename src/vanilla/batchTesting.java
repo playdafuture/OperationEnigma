@@ -27,7 +27,7 @@ public class batchTesting {
                         arguments[1] = "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";
                         seq++;
                         //System.out.println(seq+"|"+ss);
-                        ENIGMA.main(arguments);
+                        ENIGMA.encrypt(arguments);
                     }
                 }
             }
