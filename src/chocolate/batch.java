@@ -28,6 +28,9 @@ public class batch {
         }
     }
     
+    /**
+     * First attempt to go through all rings and rotor settings, output to console.
+     */
     public static void firstBatch() {
         String[] ss = {""};
         String a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -54,6 +57,11 @@ public class batch {
         }
     }
     
+    /**
+     * Outputs all rings and rotors only decrypts to separate files, based on ring settings.
+     * @throws FileNotFoundException
+     * @throws UnsupportedEncodingException 
+     */
     public static void secondBatch() throws FileNotFoundException, UnsupportedEncodingException {        
         while (true) {
             String rot = nextRotors();

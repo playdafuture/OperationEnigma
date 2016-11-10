@@ -1,6 +1,5 @@
 package strawberry;
 
-import chocolate.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +8,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import languageRecognition.Lang_rec;
 
 /**
  *
@@ -22,53 +22,31 @@ public class batch {
     static String[] cribs;
     
     public static void main(String[] args) {
-        try {
-            cribsWordAttack(3);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(batch.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        distributedDecrypts();
     }
     
-    public static void firstBatch() {
-        String[] ss = {""};
-        String a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int seq = 0;
-        for (int r = 111; r <= 888; r++) {
-            if (r%10 == 9) { r+=2; }
-            if ((r/10)%10 == 9) { r+= 20; }
-                
-            for (int i = 0; i < 26; i++) {
-                for (int j = 0; j < 26; j++) {
-                    for (int k = 0; k < 26; k++) {
-                        ss[0] = "";
-                        ss[0]+=r;  
-                        ss[0]+=a.substring(i,i+1);
-                        ss[0]+=a.substring(j,j+1);
-                        ss[0]+=a.substring(k,k+1);
-                        seq++;
-                        System.out.println(seq+"|"+ss[0]);
-                        ENIGMA.reset();
-                        System.out.println(ENIGMA.encrypt(ss));
-                    }
-                }
-            }
-        }
-    }
-    
-    public static void secondBatch() throws FileNotFoundException, UnsupportedEncodingException {        
+    public static void distributedDecrypts() {
+        Lang_rec rec = new Lang_rec();
+        String path = "files/distributedDecrypts/";
+        int[] distribution = new int[100];
+        
         while (true) {
             String rot = nextRotors();
             if (rot != null) {                
-                PrintWriter writer = new PrintWriter("files/decrypts/"+rot+".txt", "UTF-8");
                 while (true) {
                     String ring = nextRings();
                     if (ring != null) {                        
                         String[] ss = {rot+ring};
                         ENIGMA.reset();
-                        writer.print(ENIGMA.encrypt(ss));
-                        writer.println(ring);
+                        String cipher = ENIGMA.encrypt(ss);
+                        String key = rot + ring;
+                        double likelyhood = rec.lang_test_double(cipher)*100;
+                        int roundDown = (int) likelyhood;
+                        distribution[roundDown]++;
+                        IO.IO.setAppendOut(path+roundDown+".txt");
+                        IO.IO.append(cipher + " " + key + "\n");
+                        IO.IO.closeA();
                     } else {
-                        writer.close();
                         break;
                     }                    
                 }                
@@ -76,8 +54,14 @@ public class batch {
                 break;
             }
         }
+        for (int i = 0; i < 100; i++) {
+            if (i < 10) {
+                System.out.print(" ");
+            }
+            System.out.println(i + " " + distribution[i]);
+        }
     }
-    
+   
     public static void cribsWordAttack(int threshold) throws FileNotFoundException {
         loadCrib();
         PrintWriter writer = new PrintWriter("files/decrypts/crib"+threshold+".txt");

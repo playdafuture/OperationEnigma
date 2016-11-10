@@ -1,9 +1,11 @@
 package IO;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -16,6 +18,7 @@ import java.util.logging.Logger;
 public abstract class IO {
     public static BufferedReader inStream;
     public static PrintWriter outStream;
+    public static BufferedWriter outStreamA;
 
     public static void setIO(String inFile, String outFile) {
         try {
@@ -26,12 +29,37 @@ public abstract class IO {
         }
     }
     
+    public static void setAppendOut(String outFile) {
+        try {
+            outStreamA = new BufferedWriter(new FileWriter(outFile,true));
+        } catch (IOException ex) {
+            System.out.println("IO Exception @IO.setAppendOut()");
+        }
+    }
+    
     public static void closeIO() {
         try {
             inStream.close();
             outStream.close();
         } catch(IOException e) {
             System.out.println("IO Exception @IO.closeIO()");
+        }
+    }
+    
+    public static void append(String line) {
+        try {
+            outStreamA.append(line);
+            outStreamA.flush();
+        } catch (IOException ex) {
+            System.out.println("IO Exception @IO.append()");
+        }        
+    }
+    
+    public static void closeA() {
+        try {
+            outStreamA.close();
+        } catch (IOException ex) {
+            System.out.println("IO Exception @IO.closeA()");
         }
     }
 
