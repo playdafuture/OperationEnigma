@@ -1,4 +1,4 @@
-package chocolate;
+package rockyRoad;
 
 /**
  * Enigma object with main class.
@@ -203,21 +203,28 @@ public class ENIGMA {
         ring_r = (byte) (settingsString.charAt(5) - 'A' + 1);
         //end of ring setting
         
-        //start of plugboard setting (optional)
+        //start of plugboard settings (optional)
         settingsString = settingsString.substring(6);
-        if (settingsString.length() > 0) { //there is plug board setting
+        if (settingsString.length() > 0) { //there is 1st pair of plugboard settings
             plugBoard_1i = (byte) (settingsString.charAt(0) - 'A' + 1);
             plugBoard_1o = (byte) (settingsString.charAt(1) - 'A' + 1);
-            plugBoard_2i = (byte) (settingsString.charAt(2) - 'A' + 1);
-            plugBoard_2o = (byte) (settingsString.charAt(3) - 'A' + 1);
-            plugBoard_3i = (byte) (settingsString.charAt(4) - 'A' + 1);
-            plugBoard_3o = (byte) (settingsString.charAt(5) - 'A' + 1);
-            settingsString = settingsString.substring(6);
-            if (settingsString.length() > 0) { //there is 4th pair
-                plugBoard_4i = (byte) (settingsString.charAt(0) - 'A' + 1);
-                plugBoard_4o = (byte) (settingsString.charAt(1) - 'A' + 1);
+            settingsString = settingsString.substring(2);
+            if (settingsString.length() > 0) { //there is 2nd pair           
+                plugBoard_2i = (byte) (settingsString.charAt(0) - 'A' + 1);
+                plugBoard_2o = (byte) (settingsString.charAt(1) - 'A' + 1);
+                settingsString = settingsString.substring(2);
+                if (settingsString.length() > 0) { //there is 3rd pair      
+                    plugBoard_3i = (byte) (settingsString.charAt(0) - 'A' + 1);
+                    plugBoard_3o = (byte) (settingsString.charAt(1) - 'A' + 1);
+                    settingsString = settingsString.substring(2);
+                    if (settingsString.length() > 0) { //there is 4th pair
+                        plugBoard_4i = (byte) (settingsString.charAt(0) - 'A' + 1);
+                        plugBoard_4o = (byte) (settingsString.charAt(1) - 'A' + 1);
+                    }
+                }                
             }
-        } //else, no plugboard setting (for testing purpose only)
+        }          
+        //else, no plugboard setting (for testing purpose only)
         //end of plugboard setting (optional)
         
         String decipher = "";

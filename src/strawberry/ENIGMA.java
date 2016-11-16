@@ -6,7 +6,7 @@ package strawberry;
  * @author Jinqiu Liu
  */
 public class ENIGMA {       
-    public static String cipherText = 
+    public static final String cipherText = 
         "CGKYTCJPXBMRRTQCQCVPYVYWVTCHEVQKCZNYXZULOPYWFCMLVPSOSYWZVDWOYAMCWMJ";
     
     /**
@@ -75,11 +75,17 @@ public class ENIGMA {
         ground_r = 1;
     }
     
-    public static String encrypt(String[] args) {
+    public static String encrypt(String key, String cipher, boolean reset) {
+        String localCipher;
         //load settings
-        settingsString = args[0];       //Modify this to run from here
-        if (args.length == 2) {
-            cipherText = args[1];           //Modify this for debugging
+        settingsString = key;       //Modify this to run from here
+        if (cipher != null) {
+            localCipher = cipher;           //Modify this for debugging
+        } else {
+            localCipher = cipherText;
+        }
+        if (reset) {
+            reset();
         }
         //Assign settings variables
         //start of rotor selections
@@ -228,8 +234,8 @@ public class ENIGMA {
         //end of plugboard setting (optional)
         
         String decipher = "";
-        for (byte i = 0; i < cipherText.length(); i++) {
-            decipher += doCipher(cipherText.charAt(i));
+        for (byte i = 0; i < localCipher.length(); i++) {
+            decipher += doCipher(localCipher.charAt(i));
         }
         return (decipher);
     }
@@ -237,7 +243,7 @@ public class ENIGMA {
     /**
      * Run the whole Enigma machine process without other function calls.
      * @param input The input character (plaintext)
-     * @return  The output character (ciphertext)
+     * @return  The output character (localCipher)
      */
     public static char doCipher(char input) {        
         // convert input to number format
