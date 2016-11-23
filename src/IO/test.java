@@ -6,16 +6,17 @@ package IO;
  */
 public class test {
     public static void main(String[] args) {
-        IO.setIO("files/englishText/5.txt", "files/englishText/5c.txt");
+        READ.set("files/englishText/5.txt");
+        OVERWRITE.set("files/englishText/5c.txt");
         String s;
         String l = "";
         String key;
         String c1;
         String d1;
         while (true) {
-            s = IO.getWord();
+            s = READ.getWord();
             if (s == null) {
-                IO.closeIO();
+                READ.close();
                 break;
             }
             l = l+s;
@@ -23,54 +24,54 @@ public class test {
                 key = randomKey();
                 String[] ss = {key, l}; //full key, l = plaintext
                 strawberry.ENIGMA.reset();
-                c1 = strawberry.ENIGMA.encrypt(ss); //c1 = full encrypt
-                IO.outln("key =");
-                IO.outln(key);
-                IO.outln("cipher =");
-                IO.outln(c1);
-                IO.outln("plain text =");
-                IO.outln(l);
+                c1 = chocolate.ENIGMA.encrypt(ss); //c1 = full encrypt
+                OVERWRITE.println("key =");
+                OVERWRITE.println(key);
+                OVERWRITE.println("cipher =");
+                OVERWRITE.println(c1);
+                OVERWRITE.println("plain text =");
+                OVERWRITE.println(l);
                 ss[1] = c1;
                 //start partial pairings                
                     //3 pairs
                     key = key.substring(0, 12);
                     ss[0] = key;
                     strawberry.ENIGMA.reset();
-                    d1 = strawberry.ENIGMA.encrypt(ss);
-                    IO.outln("decrypt with 3 pairs of plugboard = " + key);
-                    IO.outln(d1);
+                    d1 = chocolate.ENIGMA.encrypt(ss);
+                    OVERWRITE.println("decrypt with 3 pairs of plugboard = " + key);
+                    OVERWRITE.println(d1);
                     
                     //2 pairs
                     key = key.substring(0, 10);
                     key += "  ";
                     ss[0] = key;
                     strawberry.ENIGMA.reset();
-                    d1 = strawberry.ENIGMA.encrypt(ss);
-                    IO.outln("decrypt with 2 pairs of plugboard = " + key);
-                    IO.outln(d1);
+                    d1 = chocolate.ENIGMA.encrypt(ss);
+                    OVERWRITE.println("decrypt with 2 pairs of plugboard = " + key);
+                    OVERWRITE.println(d1);
                     
                     //1 pair
                     key = key.substring(0, 8);
                     key += "    ";
                     ss[0] = key;
                     strawberry.ENIGMA.reset();
-                    d1 = strawberry.ENIGMA.encrypt(ss);
-                    IO.outln("decrypt with 1 pair of plugboard = " + key);
-                    IO.outln(d1);
+                    d1 = chocolate.ENIGMA.encrypt(ss);
+                    OVERWRITE.println("decrypt with 1 pair of plugboard = " + key);
+                    OVERWRITE.println(d1);
                     
                     //0 pairs
                     key = key.substring(0, 6);
                     ss[0] = key;
                     strawberry.ENIGMA.reset();
-                    d1 = strawberry.ENIGMA.encrypt(ss);
-                    IO.outln("decrypt with 0 pairs of plugboard = " + key);
-                    IO.outln(d1);               
+                    d1 = chocolate.ENIGMA.encrypt(ss);
+                    OVERWRITE.println("decrypt with 0 pairs of plugboard = " + key);
+                    OVERWRITE.println(d1);               
                 
-                IO.outln("");
+                OVERWRITE.println("");
                 l = "";
             }
         }
-        IO.closeIO();
+        OVERWRITE.close();
     }
     
     public static String randomKey() {

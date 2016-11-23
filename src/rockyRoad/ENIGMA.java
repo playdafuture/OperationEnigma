@@ -1,4 +1,4 @@
-package strawberry;
+package rockyRoad;
 
 /**
  * Enigma object with main class.

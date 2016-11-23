@@ -1,4 +1,4 @@
-package strawberry;
+package rockyRoad;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -234,7 +234,7 @@ public class batch {
     }
     
     public static String nextRnR() {
-        String rotor = "";
+        String rotorr;
         String ring;
         if (r3 == 0) {
             ring = nextRings();
@@ -243,14 +243,14 @@ public class batch {
                         +alphabets.substring(r2,r2+1)
                         +alphabets.substring(r3,r3+1);
         }
-        rotor = nextRotors();
-        if (rotor == null) {
-            rotor = nextRotors();
+        rotorr = nextRotors();
+        if (rotorr == null) {
+            rotorr = nextRotors();
             ring = nextRings();
         }
         if (ring == null) {
             return null;
         }
-        return rotor+ring;
+        return rotorr+ring;
     }
 }

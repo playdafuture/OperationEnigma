@@ -1,4 +1,4 @@
-package strawberry;
+package coconut;
 
 /**
  * Enigma object with main class.
